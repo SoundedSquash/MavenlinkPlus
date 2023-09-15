@@ -11,8 +11,8 @@
       "matches": ["https://*.mavenlink.com/timesheets"
                  ,"https://*.kantata.com/timesheets"],
       "js": ["thirdparty/jquery-3.6.3.min.js"
-            ,"timesheets.js"],
-      "css": ["timesheets.css"]
+            ,"helpers.js"
+            ,"timesheets.js"]
     }
   ],
   "host_permissions": ["*://*.mavenlink.com/*"],
