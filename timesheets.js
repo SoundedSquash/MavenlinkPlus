@@ -110,7 +110,7 @@ chrome.runtime.onMessage.addListener(
     if (request.action == "refreshTimesheet") {
       RefreshTimesheetTotals();
     }
-    return true;
+    return Promise.resolve({ success: true });
   });
 
 

@@ -1,11 +1,13 @@
 chrome.webRequest.onCompleted.addListener(
   function(details) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+      if (tabs[0] === undefined) return;
       chrome.tabs.sendMessage(tabs[0].id, {action: "refreshTimesheet"}, function(response) {});  
     });
   },
   {urls: ['*://*.mavenlink.com/timesheets'
          ,'*://*.mavenlink.com/timesheets#'
+         ,'*://*.mavenlink.com/timesheets/time_entries*'
          ,'*://*.mavenlink.com/timesheets/weekly*'
          ,'*://*.kantata.com/timesheets/weekly*']},
   []
