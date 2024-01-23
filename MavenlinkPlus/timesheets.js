@@ -2,7 +2,7 @@ function RefreshTimesheetTotals() {
   waitForElm('.weekly-table').then((elm) => {
     var billTotal = 0;
     var nonBillTotal = 0;
-    //For each day td wiith class "day1" through "day7"
+    //For each day td with class "day1" through "day7"
     for (var i = 1; i <= 7; i++) {
       var day = document.getElementsByClassName("summary-cell day" + i)[0];
       //  Get the value of the div element with class "billable"
