@@ -7,12 +7,12 @@ function RefreshTimesheetTotals() {
       var day = document.getElementsByClassName("summary-cell day" + i)[0];
       //  Get the value of the div element with class "billable"
       var billable = day.getElementsByClassName("billable")[0];
-      var billMinutes = ConvertHourMinutesToInt(billable.innerHTML);
+      var billMinutes = ConvertHourMinutesToInt(billable.innerText);
       //  Add the value to the total
       billTotal += billMinutes;
       //Repeat for unbillable
       var nonBillable = day.getElementsByClassName("non-billable")[0];
-      var nonBillMinutes = ConvertHourMinutesToInt(nonBillable.innerHTML);
+      var nonBillMinutes = ConvertHourMinutesToInt(nonBillable.innerText);
       nonBillTotal += nonBillMinutes;
 
       //Set the total for the day
@@ -20,10 +20,10 @@ function RefreshTimesheetTotals() {
       if (!dayTotal) {
         var div = document.createElement("div");
         div.classList.add("day-total");
-        div.innerHTML = ConvertIntToHourMinutes(billMinutes + nonBillMinutes);
+        div.innerText = ConvertIntToHourMinutes(billMinutes + nonBillMinutes);
         day.appendChild(div);
       } else {
-        dayTotal.innerHTML = ConvertIntToHourMinutes(billMinutes + nonBillMinutes);
+        dayTotal.innerText = ConvertIntToHourMinutes(billMinutes + nonBillMinutes);
       }
     }
 
