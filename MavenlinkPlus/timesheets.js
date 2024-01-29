@@ -107,7 +107,10 @@ function RefreshTimesheetProjectTotals() {
 
     //Create row for each project that has time totals.
     var tbody = '<tbody>';
-    Object.entries(dict).forEach(([key, value]) => {
+    var keys = Object.keys(dict);
+    keys.sort();
+    keys.forEach((key) => {
+      var value = dict[key];
       if (value.Billable + value.NonBillable + value.Actual + value.Scheduled == 0) return;
 
       tbody += '<tr><td>' + key + '</td><td style="color:green;">' + ConvertIntToHourMinutes(value.Billable) + '</td><td>' + ConvertIntToHourMinutes(value.NonBillable) + '</td><td>' + ConvertIntToHourMinutes(value.Billable + value.NonBillable) + '</td><td>' + ConvertIntToHourMinutes(value.Scheduled) + '</td></tr>';
