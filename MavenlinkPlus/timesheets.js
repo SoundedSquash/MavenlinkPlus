@@ -103,7 +103,7 @@ function RefreshTimesheetProjectTotals() {
     if (dict.length == 0) return;
     //Write to table
     var table = $('<table style="width:800px;" />');
-    table.append('<thead><tr><th style="width:55%;">Project</th><th style="width:11.25%; color:green;">Billable</th><th style="width:11.25%;">Non-Billable</th><th style="width:11.25%;">Total</th><th style="width:11.25%;">Scheduled</th></thead>');
+    table.append('<thead><tr><th style="width:55%;">Project</th><th style="width:11.25%; color:green;">Billable</th><th style="width:11.25%;">Non-Billable</th><th style="width:11.25%;">Total</th><th style="width:11.25%;">Scheduled Remaining</th></thead>');
 
     //Create row for each project that has time totals.
     var tbody = '<tbody>';
@@ -113,7 +113,7 @@ function RefreshTimesheetProjectTotals() {
       var value = dict[key];
       if (value.Billable + value.NonBillable + value.Actual + value.Scheduled == 0) return;
 
-      tbody += '<tr><td>' + key + '</td><td style="color:green;">' + ConvertIntToHourMinutes(value.Billable) + '</td><td>' + ConvertIntToHourMinutes(value.NonBillable) + '</td><td>' + ConvertIntToHourMinutes(value.Billable + value.NonBillable) + '</td><td>' + ConvertIntToHourMinutes(value.Scheduled) + '</td></tr>';
+      tbody += '<tr><td>' + key + '</td><td style="color:green;">' + ConvertIntToHourMinutes(value.Billable) + '</td><td>' + ConvertIntToHourMinutes(value.NonBillable) + '</td><td>' + ConvertIntToHourMinutes(value.Billable + value.NonBillable) + '</td><td>' + ConvertIntToHourMinutes(Math.max(0, value.Scheduled - (value.Billable + value.NonBillable))) + '</td></tr>';
     });
     tbody += '</tbody>';
 
