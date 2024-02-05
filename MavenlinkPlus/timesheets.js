@@ -144,7 +144,8 @@ function RetrieveProjectScheduledTotals(callback) {
   var scheduledProjects = {};
 
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", '/schedule.json?date=2024-01-28', true);
+  var dateString = ConvertHeaderToDate(document.getElementsByClassName("date")[0].innerText);
+  xhr.open("GET", '/schedule.json?date=' + dateString, true);
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4) {
       // JSON.parse does not evaluate the attacker's scripts.
