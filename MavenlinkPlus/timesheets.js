@@ -157,7 +157,7 @@ function RetrieveProjectScheduledTotals(callback) {
       // Iterate over each item in resp.data
       resp.data.forEach(function(story) {
         // Get the workspace title to match with timesheet project name later on.
-        var workspaceId = story.workspace.title;
+        var workspaceId = story.workspace.title.trim();
 
         // If this workspace ID hasn't been seen before, initialize it in the result object
         if (!result[workspaceId]) {
