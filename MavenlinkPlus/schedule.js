@@ -18,8 +18,6 @@ async function fetchDataAndProcess() {
 }
 
 function showTotals(storiesIds, data) {
-    console.log(data);
-
     // Create header column
     $("thead.header td.scheduled_actual").before("<td class='scheduled_actual'>Estimated / <span class='actual'>Actual</span></td>");
     // Nothing in overview row
@@ -29,10 +27,16 @@ function showTotals(storiesIds, data) {
     for (let i = 0; i < storiesIds.length; i++) {
         const storyId = storiesIds[i];
         const story = data.stories[storyId];
-        $(rows[i]).before(`<td class='scheduled_actual'>
-            ${ConvertIntToHourMinutes(story.time_estimate_in_minutes)} / <span class='actual'>${ConvertIntToHourMinutes(story.logged_billable_time_in_minutes)}</span>
-            <br/>
-            ${ConvertIntToHourMinutes(story.time_estimate_in_minutes - story.logged_billable_time_in_minutes)}</td>`);
+        if (story.billable)
+        {
+            $(rows[i]).before(`<td class='scheduled_actual'>
+                ${ConvertIntToHourMinutes(story.time_estimate_in_minutes, true)} / <span class='actual'>${ConvertIntToHourMinutes(story.logged_billable_time_in_minutes, true)}</span>
+                <br/>
+                ${ConvertIntToHourMinutes(story.time_estimate_in_minutes - story.logged_billable_time_in_minutes, true)}
+            </td>`);
+        } else {
+            $(rows[i]).before(`<td class='scheduled_actual'></td>`);
+        }
     }
 }
 
