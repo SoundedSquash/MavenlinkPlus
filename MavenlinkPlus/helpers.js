@@ -14,7 +14,7 @@ function ConvertHourMinutesToInt(input) {
 //Convert integer to hour minutes format to display on page
 function ConvertIntToHourMinutes(input) {
     var hours = Math.floor(input / 60);
-    var minutes = input % 60;
+    var minutes = Math.abs(input % 60);
     return hours + "h " + minutes + "m";
 }
 
