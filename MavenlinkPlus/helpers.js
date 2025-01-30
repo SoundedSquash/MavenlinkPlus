@@ -13,9 +13,11 @@ function ConvertHourMinutesToInt(input) {
   
 //Convert integer to hour minutes format to display on page
 function ConvertIntToHourMinutes(input) {
+    var negative = input < 0;
+    input = Math.abs(input);
     var hours = Math.floor(input / 60);
-    var minutes = Math.abs(input % 60);
-    return hours + "h " + minutes + "m";
+    var minutes = input % 60;
+    return `${negative ? "-" : ""}${hours}h ${minutes}m`;
 }
 
 function ConvertHeaderToDate(headerString) {
