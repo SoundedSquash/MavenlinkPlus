@@ -18,6 +18,34 @@ function ConvertIntToHourMinutes(input) {
     return hours + "h " + minutes + "m";
 }
 
+function ConvertHeaderToDate(headerString) {
+    // Split the input string into 'from' and 'to' parts
+    const [from, to] = headerString.split(' - ');
+
+    // Extract the month, day from the 'from' part and year from the 'to' part
+    const [fromMonth, fromDay] = from.split(' ');
+    const toYear = to.split(', ')[1];
+
+    // Define a month mapping
+    const monthMapping = {
+        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+        'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+        'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+    };
+
+    // Handle year wrapping
+    let year = toYear;
+    if (fromMonth === 'Dec' && to.split(' ')[0] === 'Jan') {
+        year = (parseInt(toYear) - 1).toString();
+    }
+
+    // Construct the date string
+    const dateString = `${year}-${monthMapping[fromMonth]}-${fromDay.padStart(2, '0')}`;
+
+    return dateString;
+
+}
+
 //Function used to wait for an element to load. Mavenlink loads the table after document is ready.
 function waitForElm(selector) {
     return new Promise(resolve => {
