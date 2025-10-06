@@ -27,7 +27,7 @@ function showTotals(storiesIds, data) {
     for (let i = 0; i < storiesIds.length; i++) {
         const storyId = storiesIds[i];
         const story = data.stories[storyId];
-        if (story.billable)
+        if (story.billable & (story.story_type == "task" || story.story_type == "issue"))
         {
             $(rows[i]).before(`<td class='scheduled_actual'>
                 ${ConvertIntToHourMinutes(story.time_estimate_in_minutes, true)} / <span class='actual'>${ConvertIntToHourMinutes(story.logged_billable_time_in_minutes, true)}</span>
