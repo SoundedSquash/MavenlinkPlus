@@ -1,7 +1,7 @@
 {
   "name": "Mavenlink+",
   "description": "Quality of life improvements for Mavenlink.",
-  "version": "1.0",
+  "version": "1.1",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
@@ -23,7 +23,8 @@
             ,"schedule.js"]
     }
   ],
-  "host_permissions": ["*://*.mavenlink.com/*"],
+  "host_permissions": ["*://*.mavenlink.com/*"
+                     ,"*://*.kantata.com/*"],
   "permissions": ["tabs", 
                   "scripting",
                   "webRequest"

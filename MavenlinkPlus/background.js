@@ -11,6 +11,8 @@ chrome.webRequest.onCompleted.addListener(
   },
   {urls: ['*://*.mavenlink.com/timesheets/time_entries*'
          ,'*://*.kantata.com/timesheets/time_entries*'
+         ,'*://*.mavenlink.com/api/v1/time_entries*'
+         ,'*://*.kantata.com/api/v1/time_entries*'
          ,'*://*.mavenlink.com/timesheets/weekly*'
          ,'*://*.kantata.com/timesheets/weekly*']},
   []
