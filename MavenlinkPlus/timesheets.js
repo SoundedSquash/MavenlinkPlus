@@ -40,7 +40,9 @@ function RefreshTimesheetProjectTotals() {
   for (let i = 0; i < projects.length; i++) {
     var taskTimes = {
       Billable: 0,
-      NonBillable: 0
+      NonBillable: 0,
+      Actual: 0,
+      Scheduled: 0
     }
     var project = projects[i];
 
@@ -80,28 +82,111 @@ function RefreshTimesheetProjectTotals() {
     dict[project.innerText] = taskTimes;
   };
 
-  if (dict.length == 0) return;
-  //Write to table
-  var table = $('<table style="width:750px;" />');
-  table.append('<thead><tr><th style="width:55%;">Project</th><th style="width:15%; color:green;">Billable</th><th style="width:15%;">Non-Billable</th><th style="width:15%;">Total</th></thead>');
+  //Add scheduled time to project totals
+  RetrieveProjectScheduledTotals(function(response) {
+    var scheduledProjects = response;
 
-  //Create row for each project that has time totals.
-  var tbody = '<tbody>';
-  Object.entries(dict).forEach(([key, value]) => {
-    if (value.Billable + value.NonBillable == 0) return;
+    scheduledProjects.forEach(function(scheduledProject) {
+      var project = scheduledProject.workspaceId;
+      var actualTime = scheduledProject.data.actual;
+      var scheduledTime = scheduledProject.data.scheduled;
+      if (dict.hasOwnProperty(project)) {
+        var tempTimes = dict[project];
+        tempTimes.Actual += actualTime;
+        tempTimes.Scheduled += scheduledTime;
+        dict[project] = tempTimes;
+      } else {
+        dict[project] = { Billable: 0, NonBillable: 0, Actual: actualTime, Scheduled: scheduledTime };
+      }
+    });
 
-    tbody += '<tr><td>' + key + '</td><td style="color:green;">' + ConvertIntToHourMinutes(value.Billable) + '</td><td>' + ConvertIntToHourMinutes(value.NonBillable) + '</td><td>' + ConvertIntToHourMinutes(value.Billable + value.NonBillable) + '</td></tr>';
+    if (dict.length == 0) return;
+    //Write to table
+    var table = $('<table style="width:800px;" />');
+    table.append('<thead><tr><th style="width:55%;">Project</th><th style="width:11.25%; color:green;">Billable</th><th style="width:11.25%;">Non-Billable</th><th style="width:11.25%;">Total</th><th style="width:11.25%;">Scheduled</th><th style="width:11.25%;">Scheduled Remaining</th></thead>');
+
+    //Create row for each project that has time totals.
+    var tbody = '<tbody>';
+    var keys = Object.keys(dict);
+    keys.sort();
+    keys.forEach((key) => {
+      var value = dict[key];
+      if (value.Billable + value.NonBillable + value.Actual + value.Scheduled == 0) return;
+
+      tbody += '<tr><td>' + key + '</td><td style="color:green;">' + ConvertIntToHourMinutes(value.Billable) + '</td><td>' + ConvertIntToHourMinutes(value.NonBillable) + '</td><td>' + ConvertIntToHourMinutes(value.Billable + value.NonBillable) + '</td><td>' + ConvertIntToHourMinutes(Math.max(0, value.Scheduled)) + '</td><td>' + ConvertIntToHourMinutes(Math.max(0, value.Scheduled - (value.Billable + value.NonBillable))) + '</td></tr>';
+    });
+    tbody += '</tbody>';
+
+    table.append(tbody);
+
+    //Create div if it doesn't exist and put table inside.
+    if ($('#ProjectTotals').length === 0) {
+      $('.table-controls').prepend('<div id="ProjectTotals" />');
+    }
+      $('#ProjectTotals').html(table);
+    
   });
-  tbody += '</tbody>';
-
-  table.append(tbody);
-
-  //Create div if it doesn't exist and put table inside.
-  if ($('#ProjectTotals').length === 0) {
-    $('.table-controls').prepend('<div id="ProjectTotals" />');
-  }
-    $('#ProjectTotals').html(table);
   
+}
+
+// Returns an array of objects with the following structure:
+// [
+//   {
+//     workspaceId: "Project Name",
+//     data: {
+//       actual: 123,
+//       scheduled: 123
+//     }
+//   },
+//   ...
+// ]
+function RetrieveProjectScheduledTotals(callback) {
+  var scheduledProjects = {};
+
+  var xhr = new XMLHttpRequest();
+  var dateString = ConvertHeaderToDate(document.getElementsByClassName("date")[0].innerText);
+  xhr.open("GET", '/schedule.json?date=' + dateString, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+      // JSON.parse does not evaluate the attacker's scripts.
+      var resp = JSON.parse(xhr.responseText);
+
+      // Initialize an empty object to store the results
+      var result = {};
+
+      // Iterate over each item in resp.data
+      resp.data.forEach(function(story) {
+        // Get the workspace title to match with timesheet project name later on.
+        var workspaceId = story.workspace.title.trim();
+
+        // If this workspace ID hasn't been seen before, initialize it in the result object
+        if (!result[workspaceId]) {
+          result[workspaceId] = { actual: 0, scheduled: 0 };
+        }
+
+        // Get the keys of the story.days object
+        var daysKeys = Object.keys(story.days)
+        
+        // Iterate over each key in story.days
+        daysKeys.forEach(function(key) {
+          // Get the day object associated with the key
+          var day = story.days[key];
+          
+          // Add the actual and scheduled values to the result
+          result[workspaceId].actual += day.actual;
+          result[workspaceId].scheduled += day.scheduled;
+        });
+      });
+
+      // Convert the result object to an array of objects
+      scheduledProjects = Object.keys(result).map(function(workspaceId) {
+        return { workspaceId: workspaceId, data: result[workspaceId] };
+      });
+
+      callback(scheduledProjects);
+    }
+  }
+  xhr.send();
 }
 
 //Listen for message from background to refresh the timesheet totals.
